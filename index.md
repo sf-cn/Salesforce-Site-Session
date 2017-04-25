@@ -1,37 +1,173 @@
-## Welcome to GitHub Pages
+## Manage session in salesforce site
 
-You can use the [editor on GitHub](https://github.com/sf-cn/session/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+This managed package can be used to manage session in salesforce site.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Getting started
 
-### Markdown
+### Install Managed Package
+<a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t28000000nuB3">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+</a>
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+<a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t28000000nuB3">
+  Deploy to Sandbox
+</a>
 
-```markdown
-Syntax highlighted code block
+### Session in Visualforce Page
 
-# Header 1
-## Header 2
-### Header 3
+```APEX
+public class SessionTestController {
 
-- Bulleted
-- List
+    private FW.ISession2 s;
 
-1. Numbered
-2. List
+    // constructor executed first, then page action
+    public SessionTestController() {
 
-**Bold** and _Italic_ and `Code` text
+        s = new FW.PageSession(ApexPages.currentPage());
 
-[Link](url) and ![Image](src)
+        ApexPages.currentPage().getHeaders().put('Cache-Control', 'no-cache, no-store, must-revalidate');
+        ApexPages.currentPage().getHeaders().put('Pragma', 'no-cache');
+        ApexPages.currentPage().getHeaders().put('Expires', '0');
+    }
+
+    // page action is executed after contructor
+    public PageReference Authenticate() {
+
+        s.put('name', 'Page Action: - ' + datetime.now().format('yyyy-MM-dd HH:mm:ss', 'Asia/Shanghai'));
+
+        PageReference pageRef;
+
+        if (s.get('anonymous') == null || (boolean) s.get('anonymous') == true) {
+            pageRef = new PageReference('/SessionTestLogin');
+            pageRef.setRedirect(true);
+            s.put('anonymous', true);
+        }
+        else {
+            pageRef = new PageReference('http://google.com');
+            pageRef.setRedirect(true);
+        }
+
+        s.CommitSession();
+
+        return pageRef;
+    }
+}
 ```
+### Session in REST service
+```APEX
+public class SessionTestController {
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+    private FW.ISession2 s;
 
-### Jekyll Themes
+    // constructor executed first, then page action
+    public SessionController() {
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/sf-cn/session/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+        s = new FW.PageSession(ApexPages.currentPage());
 
-### Support or Contact
+        ApexPages.currentPage().getHeaders().put('Cache-Control', 'no-cache, no-store, must-revalidate');
+        ApexPages.currentPage().getHeaders().put('Pragma', 'no-cache');
+        ApexPages.currentPage().getHeaders().put('Expires', '0');
+    }
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+    // page action is executed after contructor
+    public PageReference Authenticate() {
+
+        s.put('name', 'Page Action: - ' + datetime.now().format('yyyy-MM-dd HH:mm:ss', 'Asia/Shanghai'));
+
+        PageReference pageRef;
+
+        if (s.get('anonymous') == null || (boolean) s.get('anonymous') == true) {
+            pageRef = new PageReference('/SessionTestLogin');
+            pageRef.setRedirect(true);
+            s.put('anonymous', true);
+        }
+        else {
+            pageRef = new PageReference('http://google.com');
+            pageRef.setRedirect(true);
+        }
+
+        s.CommitSession();
+
+        return pageRef;
+    }
+}
+```
+### Session in REST service
+
+```APEX
+// https://*.csX.force.com/services/apexrest/svc/v1/
+@RestResource(urlMapping = '/svc/v1/*')
+global without sharing class RestService {
+
+    private static FW.ISession2 s;
+
+    static {
+
+        s = new FW.RestSession(RestContext.request, RestContext.response);
+        
+        RestContext.response.headers.put('Cache-Control', 'no-cache, no-store, must-revalidate');
+        RestContext.response.headers.put('Pragma', 'no-cache');
+        RestContext.response.headers.put('Expires', '0');
+    }
+
+    @HttpGet
+    global static string executeGet() {
+
+        s.put('getDomain()', Site.getDomain());
+
+        s.CommitSession();
+
+        String collegeString = '';
+        for (String sss : RestContext.request.headers.keySet()) {
+            collegeString += (collegeString == '' ? '' : ',') + sss;
+        }
+
+        return collegeString;
+    }
+}
+```
+### AJAX to invoke REST service
+```HTML
+<apex:page controller="SessionController" doctype="html-5.0" applyhtmltag="false" applybodytag="false"
+           showheader="false" sidebar="false" standardstylesheets="false">
+    <html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+              crossorigin="anonymous"></link>
+
+        <title>Session Test</title>
+
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+                crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <h1>Session Test</h1>
+
+        <button id="click">Invoke REST Service</button>
+        <script>
+            $(function(){
+                $("#click").on("click", function(){
+                    axios.get('https://*.csX.force.com/services/apexrest/svc/v1/', {
+                            method:'get',
+                            headers: { 'Site.Session': document.cookie }
+                        })
+                      .then(function (response) {
+                        console.log(response);
+                      })
+                      .catch(function (error) {
+                        console.log(error);
+                      });
+                });
+            });
+        </script>
+    </body>
+</html>
+</apex:page>
+```
