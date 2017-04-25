@@ -17,46 +17,7 @@ This managed package can be used to manage session in salesforce site.
 ### Session in Visualforce Page
 
 ```APEX
-public class SessionTestController {
-
-    private FW.ISession2 s;
-
-    // constructor executed first, then page action
-    public SessionTestController() {
-
-        s = new FW.PageSession(ApexPages.currentPage());
-
-        ApexPages.currentPage().getHeaders().put('Cache-Control', 'no-cache, no-store, must-revalidate');
-        ApexPages.currentPage().getHeaders().put('Pragma', 'no-cache');
-        ApexPages.currentPage().getHeaders().put('Expires', '0');
-    }
-
-    // page action is executed after contructor
-    public PageReference Authenticate() {
-
-        s.put('name', 'Page Action: - ' + datetime.now().format('yyyy-MM-dd HH:mm:ss', 'Asia/Shanghai'));
-
-        PageReference pageRef;
-
-        if (s.get('anonymous') == null || (boolean) s.get('anonymous') == true) {
-            pageRef = new PageReference('/SessionTestLogin');
-            pageRef.setRedirect(true);
-            s.put('anonymous', true);
-        }
-        else {
-            pageRef = new PageReference('http://google.com');
-            pageRef.setRedirect(true);
-        }
-
-        s.CommitSession();
-
-        return pageRef;
-    }
-}
-```
-### Session in REST service
-```APEX
-public class SessionTestController {
+public class SessionController {
 
     private FW.ISession2 s;
 
@@ -93,6 +54,7 @@ public class SessionTestController {
     }
 }
 ```
+
 ### Session in REST service
 
 ```APEX
