@@ -5,12 +5,11 @@ This managed package can be used to manage session in salesforce site.
 ## Getting started
 
 ### Install Managed Package
-<a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t28000000nuB3">
-  <img alt="Deploy to Salesforce"
-       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+<a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t28000000nuB3" target="_blank">
+  Deploy to Production
 </a>
-
-<a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t28000000nuB3">
+<br />
+<a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t28000000nuB3" target="_blank">
   Deploy to Sandbox
 </a>
 
