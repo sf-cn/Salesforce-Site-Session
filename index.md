@@ -8,7 +8,7 @@ This managed package can be used to manage session in salesforce site.
 <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t28000000nuB3" target="_blank">
   Deploy to Production
 </a>
-<br />
+<br /><br />
 <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t28000000nuB3" target="_blank">
   Deploy to Sandbox
 </a>
