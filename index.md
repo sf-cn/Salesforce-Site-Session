@@ -14,6 +14,39 @@ This managed package can be used to manage session in salesforce site.
 </a>
 
 ### Session in Visualforce Page
+```APEX
+FW.ISession2 session = new FW.PageSession(ApexPages.currentPage());
+session.put('name', 'value');
+session.CommitSession();
+string sessionValue = session.getString('name');
+```
+* call `CommitSession()` to establish initial session
+*  `CommitSession()` can not be call in Virtualforce page controller constructor, the earliest it can be call is in page action method
+* always call `CommitSession()` to save session values.
+### Session in REST service
+```APEX
+FW.ISession2 session = new FW.RestSession(RestContext.request, RestContext.response);
+session.put('name', 'value');
+session.CommitSession();
+string sessionValue = session.getString('name');
+```
+### AJAX to invoke REST service
+* HTTP header 'Site.Session' need to be set before send ajax request with the value of `document.cookie`
+```JAVASCRIPT
+$("#click").on("click", function(){
+    axios.get('https://*.csX.force.com/services/apexrest/svc/v1/', {
+            method:'get',
+            headers: { 'Site.Session': document.cookie }
+        })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+});
+```
+### Sample Controller
 
 ```APEX
 public class SessionController {
@@ -53,9 +86,7 @@ public class SessionController {
     }
 }
 ```
-
-### Session in REST service
-
+### Sample Custom REST API
 ```APEX
 // https://*.csX.force.com/services/apexrest/svc/v1/
 @RestResource(urlMapping = '/svc/v1/*')
@@ -88,7 +119,7 @@ global without sharing class RestService {
     }
 }
 ```
-### AJAX to invoke REST service
+### Sample Virtualforce Page
 ```HTML
 <apex:page controller="SessionController" doctype="html-5.0" applyhtmltag="false" applybodytag="false"
            showheader="false" sidebar="false" standardstylesheets="false">
