@@ -1,6 +1,6 @@
 ## Manage session in salesforce site
 
-This managed package can be used to manage session in salesforce site.
+Manage session in custom force.com site since `Cache.Session` is not available for anonymous users outside community/customer portal/partner portal
 
 ## Getting started
 
