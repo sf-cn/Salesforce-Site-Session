@@ -1,4 +1,4 @@
-## Manage session in salesforce site
+## Manage session in custom force.com site
 
 Manage session in custom force.com site since `Cache.Session` is not available for anonymous users outside community/customer portal/partner portal
 
