@@ -1,6 +1,8 @@
 ## Manage session in salesforce site
 
-Manage session in custom force.com site since `Cache.Session` is not available for anonymous users outside community/customer portal/partner portal
+Manage session in custom force.com site since `Cache.Session` is not available for anonymous users outside community/customer portal/partner portal.
+
+If you need to manage authentication in custom force.com site; use account/contact/custom object as your site user storage. Please review <a href="http://authen.sfdev.cn/"  target="_blank">Custom Authentication Management Package</a>
 
 ## Getting started
 
